@@ -1,6 +1,6 @@
 'use client';
 
-import { ScryfallCard } from '../page';
+import { ScryfallCard } from '../CardsPageInner';
 
 interface CardGridProps {
   cards: ScryfallCard[];
@@ -14,11 +14,11 @@ interface CardGridProps {
 
 // Colori rarity → colore testo e sfondo badge
 const RARITY_STYLE: Record<string, { color: string; bg: string; label: string }> = {
-  common:   { color: '#aaa',    bg: 'rgba(170,170,170,0.12)', label: 'C' },
+  common: { color: '#aaa', bg: 'rgba(170,170,170,0.12)', label: 'C' },
   uncommon: { color: '#8ab4f8', bg: 'rgba(138,180,248,0.12)', label: 'U' },
-  rare:     { color: '#f0c040', bg: 'rgba(240,192,64,0.12)',  label: 'R' },
-  mythic:   { color: '#f87c7c', bg: 'rgba(248,124,124,0.12)', label: 'M' },
-  special:  { color: '#c9a84c', bg: 'rgba(201,168,76,0.12)',  label: 'S' },
+  rare: { color: '#f0c040', bg: 'rgba(240,192,64,0.12)', label: 'R' },
+  mythic: { color: '#f87c7c', bg: 'rgba(248,124,124,0.12)', label: 'M' },
+  special: { color: '#c9a84c', bg: 'rgba(201,168,76,0.12)', label: 'S' },
 };
 
 /**
