@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>AetherDeck — MTG Platform</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;700;900&family=Outfit:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="assets/css/homepage.css" />
+</head>
+<body>
+
+<div class="bg-canvas"><div class="bg-orb"></div><div class="bg-orb"></div><div class="bg-orb"></div></div>
+<div class="bg-grid"></div>
+<div id="overlay"></div>
+
+<!-- ══ NAVBAR ══ -->
+<nav id="navbar">
+  <div class="nav-logo"><div class="nav-logo-icon">⬡</div>AetherDeck</div>
+
+  <div class="nav-search-wrap" id="nav-search-wrap">
+    <div class="nav-search-bar">
+      <span style="color:var(--text-dim);font-size:.9rem;">🔍</span>
+      <input type="text" placeholder="Cerca una carta…" id="nav-search-input" />
+      <button class="nav-filter-btn-sm" onclick="openFilter(event)" title="Filtri avanzati" style="padding:5px 8px;display:flex;align-items:center;justify-content:center;">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" style="color:var(--gold);">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="6" y1="12" x2="18" y2="12"/>
+          <line x1="9" y1="18" x2="15" y2="18"/>
+        </svg>
+      </button>
+    </div>
+  </div>
+
+  <div class="nav-right">
+    <a class="nav-link">Carte</a>
+    <a class="nav-link">Mazzi</a>
+    <a class="nav-link">Community</a>
+    <button class="profile-btn" id="profile-btn">👤</button>
+  </div>
+</nav>
+
+<!-- ══ PROFILE POPUP ══ -->
+<div id="profile-popup" class="glass">
+  <div class="popup-title">Bentornato su AetherDeck</div>
+  <div class="popup-sub">Accedi per gestire mazzi e seguire la community</div>
+  <div class="popup-tabs">
+    <button class="popup-tab active" id="tab-login" onclick="switchTab('login')">Accedi</button>
+    <button class="popup-tab" id="tab-register" onclick="switchTab('register')">Registrati</button>
+  </div>
+  <div id="panel-login" class="popup-form">
+    <input class="popup-input" type="email" placeholder="Email" />
+    <input class="popup-input" type="password" placeholder="Password" />
+    <button class="popup-btn">Accedi →</button>
+    <div class="popup-divider">oppure</div>
+    <div class="popup-oauth">
+      <button class="popup-oauth-btn">🌐 Google</button>
+      <button class="popup-oauth-btn">🍎 Apple</button>
+    </div>
+  </div>
+  <div id="panel-register" class="popup-form" style="display:none">
+    <input class="popup-input" type="text" placeholder="Username" />
+    <input class="popup-input" type="email" placeholder="Email" />
+    <input class="popup-input" type="password" placeholder="Password" />
+    <input class="popup-input" type="password" placeholder="Conferma password" />
+    <button class="popup-btn">Crea account →</button>
+    <div class="popup-divider">oppure</div>
+    <div class="popup-oauth">
+      <button class="popup-oauth-btn">🌐 Google</button>
+      <button class="popup-oauth-btn">🍎 Apple</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ FILTER PANEL ══ -->
+<div id="filter-overlay"></div>
+<div id="filter-panel" class="glass">
+
+  <div class="fp-header">
+    <span class="fp-title">🔍 Filtri avanzati</span>
+    <div style="display:flex;align-items:center;gap:16px;">
+      <!-- Toggle carte non legali -->
+      <div class="fp-toggle">
+        <span class="toggle-label">Includi carte non legali</span>
+        <label class="toggle-sw">
+          <input type="checkbox" id="toggle-illegal">
+          <div class="toggle-track"></div>
+          <div class="toggle-thumb"></div>
+        </label>
+      </div>
+      <button class="fp-close" onclick="closeFilter()">✕</button>
+    </div>
+  </div>
+
+  <div class="fp-body">
+
+    <!-- COLORI -->
+    <div class="fp-section">
+      <div class="fp-section-title">Colori</div>
+      <div class="color-grid">
+        <div class="color-pill cp-W" data-color="W" onclick="toggleColor(this)" title="Bianco">⬜</div>
+        <div class="color-pill cp-U" data-color="U" onclick="toggleColor(this)" title="Blu">💧</div>
+        <div class="color-pill cp-B" data-color="B" onclick="toggleColor(this)" title="Nero">🖤</div>
+        <div class="color-pill cp-R" data-color="R" onclick="toggleColor(this)" title="Rosso">🔥</div>
+        <div class="color-pill cp-G" data-color="G" onclick="toggleColor(this)" title="Verde">🌿</div>
+        <div class="color-pill cp-C" data-color="C" onclick="toggleColor(this)" title="Incolore">◇</div>
+      </div>
+      <div class="color-mode-row">
+        <button class="cmode-btn active" onclick="setColorMode(this,'exactly')">Esattamente questi colori</button>
+        <button class="cmode-btn" onclick="setColorMode(this,'including')">Includendo questi colori</button>
+        <button class="cmode-btn" onclick="setColorMode(this,'atmost')">Al massimo questi colori</button>
+        <button class="cmode-btn" onclick="setColorMode(this,'commander')">Colori Commander</button>
+      </div>
+    </div>
+
+    <!-- FORMATO -->
+    <div class="fp-section">
+      <div class="fp-section-title">Formato</div>
+      <div class="chip-grid">
+        <div class="fchip" onclick="toggleChip(this)">Standard</div>
+        <div class="fchip" onclick="toggleChip(this)">Pioneer</div>
+        <div class="fchip" onclick="toggleChip(this)">Modern</div>
+        <div class="fchip" onclick="toggleChip(this)">Legacy</div>
+        <div class="fchip" onclick="toggleChip(this)">Vintage</div>
+        <div class="fchip" onclick="toggleChip(this)">Commander</div>
+        <div class="fchip" onclick="toggleChip(this)">Pauper</div>
+        <div class="fchip" onclick="toggleChip(this)">Explorer</div>
+        <div class="fchip" onclick="toggleChip(this)">Historic</div>
+        <div class="fchip" onclick="toggleChip(this)">Alchemy</div>
+        <div class="fchip" onclick="toggleChip(this)">Brawl</div>
+        <div class="fchip" onclick="toggleChip(this)">Oathbreaker</div>
+      </div>
+    </div>
+
+    <!-- RARITÀ -->
+    <div class="fp-section">
+      <div class="fp-section-title">Rarità</div>
+      <div class="rarity-grid">
+        <div class="rarity-pill r-C" onclick="toggleChip(this)">Common</div>
+        <div class="rarity-pill r-U" onclick="toggleChip(this)">Uncommon</div>
+        <div class="rarity-pill r-R" onclick="toggleChip(this)">Rare</div>
+        <div class="rarity-pill r-M" onclick="toggleChip(this)">Mythic</div>
+        <div class="rarity-pill r-S" onclick="toggleChip(this)">Special</div>
+      </div>
+    </div>
+
+    <!-- TIPO -->
+    <div class="fp-section">
+      <div class="fp-section-title">Tipo di carta</div>
+      <div class="chip-grid">
+        <div class="fchip" onclick="toggleChip(this)">Creature</div>
+        <div class="fchip" onclick="toggleChip(this)">Instant</div>
+        <div class="fchip" onclick="toggleChip(this)">Sorcery</div>
+        <div class="fchip" onclick="toggleChip(this)">Enchantment</div>
+        <div class="fchip" onclick="toggleChip(this)">Artifact</div>
+        <div class="fchip" onclick="toggleChip(this)">Planeswalker</div>
+        <div class="fchip" onclick="toggleChip(this)">Land</div>
+        <div class="fchip" onclick="toggleChip(this)">Battle</div>
+        <div class="fchip" onclick="toggleChip(this)">Tribal</div>
+      </div>
+    </div>
+
+    <!-- COSTO DI MANA -->
+    <div class="fp-section">
+      <div class="fp-section-title">Valore di mana (CMC)</div>
+      <div class="range-row">
+        <div class="range-field">
+          <span class="range-label">Da</span>
+          <input class="range-input" type="number" min="0" max="20" placeholder="0" />
+        </div>
+        <div class="range-field">
+          <span class="range-label">A</span>
+          <input class="range-input" type="number" min="0" max="20" placeholder="20" />
+        </div>
+      </div>
+    </div>
+
+    <!-- POWER / TOUGHNESS -->
+    <div class="fp-section">
+      <div class="fp-section-title">Forza / Costituzione (creature)</div>
+      <div class="range-row" style="margin-bottom:10px;">
+        <div class="range-field">
+          <span class="range-label">Forza da</span>
+          <input class="range-input" type="number" placeholder="0" />
+        </div>
+        <div class="range-field">
+          <span class="range-label">Forza a</span>
+          <input class="range-input" type="number" placeholder="∞" />
+        </div>
+      </div>
+      <div class="range-row">
+        <div class="range-field">
+          <span class="range-label">Costituzione da</span>
+          <input class="range-input" type="number" placeholder="0" />
+        </div>
+        <div class="range-field">
+          <span class="range-label">Costituzione a</span>
+          <input class="range-input" type="number" placeholder="∞" />
+        </div>
+      </div>
+    </div>
+
+    <!-- TESTO DELLA CARTA -->
+    <div class="fp-section">
+      <div class="fp-section-title">Testo oracle</div>
+      <div class="text-field">
+        <span class="text-field-label">Contiene</span>
+        <input type="text" placeholder="es. flying, trample, whenever…" />
+      </div>
+      <div class="text-field">
+        <span class="text-field-label">Contiene</span>
+        <input type="text" placeholder="aggiungi altra parola chiave…" />
+      </div>
+    </div>
+
+    <!-- NOME / SOTTOTIPO -->
+    <div class="fp-section">
+      <div class="fp-section-title">Nome e sottotipo</div>
+      <div class="range-row">
+        <div class="range-field">
+          <span class="range-label">Nome carta</span>
+          <input class="range-input" type="text" placeholder="Nome esatto o parziale" />
+        </div>
+        <div class="range-field">
+          <span class="range-label">Sottotipo</span>
+          <input class="range-input" type="text" placeholder="es. Elf, Wizard, Dragon…" />
+        </div>
+      </div>
+    </div>
+
+    <!-- PREZZO -->
+    <div class="fp-section">
+      <div class="fp-section-title">Prezzo (Cardmarket €)</div>
+      <div class="range-row">
+        <div class="range-field">
+          <span class="range-label">Da €</span>
+          <input class="range-input" type="number" min="0" step="0.01" placeholder="0.00" />
+        </div>
+        <div class="range-field">
+          <span class="range-label">A €</span>
+          <input class="range-input" type="number" step="0.01" placeholder="999.00" />
+        </div>
+      </div>
+    </div>
+
+    <!-- EDIZIONE / SET -->
+    <div class="fp-section">
+      <div class="fp-section-title">Edizione / Set</div>
+      <select class="fp-select">
+        <option value="">— Tutti i set —</option>
+        <optgroup label="2024-2025">
+          <option>Duskmourn: House of Horror (DSK)</option>
+          <option>Bloomburrow (BLB)</option>
+          <option>Assassin's Creed (ACR)</option>
+          <option>Modern Horizons 3 (MH3)</option>
+        </optgroup>
+        <optgroup label="2023-2024">
+          <option>Outlaws of Thunder Junction (OTJ)</option>
+          <option>Murders at Karlov Manor (MKM)</option>
+          <option>The Lost Caverns of Ixalan (LCI)</option>
+          <option>Wilds of Eldraine (WOE)</option>
+          <option>Lord of the Rings (LTR)</option>
+        </optgroup>
+        <optgroup label="Classici">
+          <option>Modern Horizons 2 (MH2)</option>
+          <option>Strixhaven (STX)</option>
+          <option>Zendikar Rising (ZNR)</option>
+          <option>Theros Beyond Death (THB)</option>
+          <option>War of the Spark (WAR)</option>
+          <option>Ravnica Allegiance (RNA)</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <!-- ARTISTA -->
+    <div class="fp-section">
+      <div class="fp-section-title">Artista</div>
+      <div class="text-field">
+        <input type="text" placeholder="es. John Avon, Terese Nielsen…" />
+      </div>
+    </div>
+
+  </div><!-- /fp-body -->
+
+  <div class="fp-footer">
+    <span class="fp-active-count" id="fp-active-count"></span>
+    <div style="display:flex;gap:10px;">
+      <button class="fp-reset" onclick="resetFilters()">Azzera filtri</button>
+      <button class="fp-apply" onclick="closeFilter()">Applica →</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ HERO ══ -->
+<section id="hero">
+  <div class="hero-badge glass">
+    <span class="badge-dot"></span>
+    Prezzi Cardmarket aggiornati · 32.000+ carte
+  </div>
+  <h1 class="hero-title">Il tuo universo<br/><span>Magic</span></h1>
+  <p class="hero-sub">Cerca carte, costruisci mazzi, monitora i prezzi e connettiti con la community italiana.</p>
+
+  <div id="hero-searchbar">
+    <div class="hero-search-inner">
+      <button class="filter-trigger-btn" id="hero-filter-btn" onclick="openFilter(event)" title="Filtri avanzati">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+          <line x1="3" y1="6" x2="21" y2="6"/>
+          <line x1="6" y1="12" x2="18" y2="12"/>
+          <line x1="9" y1="18" x2="15" y2="18"/>
+        </svg>
+        <span class="filter-count" id="filter-count-badge">0</span>
+      </button>
+      <input type="text" placeholder="Cerca una carta… es. Lightning Bolt, Jace, Black Lotus" id="hero-search-input" />
+      <button class="search-submit">Cerca</button>
+    </div>
+  </div>
+
+  <div class="scroll-cue">
+    <span>SCORRI</span><span class="scroll-arrow">↓</span>
+  </div>
+</section>
+
+<!-- ══ CONTENT ══ -->
+<div class="content-wrap">
+  <div class="container">
+
+    <section class="decks-section reveal">
+      <div class="section-head">
+        <div class="section-label">🔥 Trending questa settimana</div>
+        <h2 class="section-title">Mazzi più <em>interagiti</em></h2>
+      </div>
+      <div class="decks-grid">
+        <div class="deck-card glass">
+          <div class="deck-card-top"><span class="deck-format-badge">Modern</span><span class="deck-hot">🔥 #1</span></div>
+          <div class="deck-name">Izzet Murktide</div>
+          <div class="deck-author">di Lorenzo M. · 3 giorni fa</div>
+          <div class="deck-colors"><div class="color-pip pip-U">💧</div><div class="color-pip pip-R">🔥</div></div>
+          <div class="deck-stats"><div class="deck-stat">❤️ <strong>148</strong></div><div class="deck-stat">💬 <strong>34</strong></div><div class="deck-stat">🔁 <strong>62</strong></div></div>
+        </div>
+        <div class="deck-card glass">
+          <div class="deck-card-top"><span class="deck-format-badge">Standard</span><span class="deck-hot">🔥 #2</span></div>
+          <div class="deck-name">Domain Ramp</div>
+          <div class="deck-author">di Sara R. · 5 giorni fa</div>
+          <div class="deck-colors"><div class="color-pip pip-W">⬜</div><div class="color-pip pip-U">💧</div><div class="color-pip pip-B">🖤</div><div class="color-pip pip-R">🔥</div><div class="color-pip pip-G">🌿</div></div>
+          <div class="deck-stats"><div class="deck-stat">❤️ <strong>112</strong></div><div class="deck-stat">💬 <strong>28</strong></div><div class="deck-stat">🔁 <strong>49</strong></div></div>
+        </div>
+        <div class="deck-card glass">
+          <div class="deck-card-top"><span class="deck-format-badge">Commander</span><span class="deck-hot">🔥 #3</span></div>
+          <div class="deck-name">Atraxa Superfriends</div>
+          <div class="deck-author">di Marco V. · 6 giorni fa</div>
+          <div class="deck-colors"><div class="color-pip pip-W">⬜</div><div class="color-pip pip-U">💧</div><div class="color-pip pip-B">🖤</div><div class="color-pip pip-G">🌿</div></div>
+          <div class="deck-stats"><div class="deck-stat">❤️ <strong>98</strong></div><div class="deck-stat">💬 <strong>21</strong></div><div class="deck-stat">🔁 <strong>41</strong></div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="prices-section reveal reveal-d1">
+      <div class="section-head">
+        <div class="section-label">📊 Aggiornato oggi · fonte Cardmarket</div>
+        <h2 class="section-title">Oscillazioni di <em>prezzo</em> notevoli</h2>
+      </div>
+      <div class="prices-grid">
+        <div class="price-panel glass">
+          <div class="price-panel-header"><span class="panel-icon">📈</span><span class="panel-title">Maggiori rialzi</span><span class="panel-sub">ultimi 7 giorni</span></div>
+          <div class="price-list">
+            <div class="price-row"><div class="price-card-thumb" style="background:linear-gradient(160deg,#1a0a2e,#3d1a6e)">✨</div><div class="price-card-info"><div class="price-card-name">Jace, the Mind Sculptor</div><div class="price-card-set">Worldwake · Mythic</div></div><svg class="price-sparkline" viewBox="0 0 60 28"><polyline class="spark-up" points="0,22 10,18 20,20 30,14 40,10 50,7 60,3" fill="none" stroke-width="2" stroke-linecap="round"/></svg><span class="price-change-val up">+18.4%</span></div>
+            <div class="price-row"><div class="price-card-thumb" style="background:linear-gradient(160deg,#200808,#601010)">🔥</div><div class="price-card-info"><div class="price-card-name">Ragavan, Nimble Pilferer</div><div class="price-card-set">MH2 · Mythic</div></div><svg class="price-sparkline" viewBox="0 0 60 28"><polyline class="spark-up" points="0,24 10,22 20,19 30,16 40,12 50,9 60,5" fill="none" stroke-width="2" stroke-linecap="round"/></svg><span class="price-change-val up">+12.1%</span></div>
+            <div class="price-row"><div class="price-card-thumb" style="background:linear-gradient(160deg,#0d1a2e,#1a3d6e)">💧</div><div class="price-card-info"><div class="price-card-name">Force of Will</div><div class="price-card-set">Alliances · Uncommon</div></div><svg class="price-sparkline" viewBox="0 0 60 28"><polyline class="spark-up" points="0,26 10,23 20,20 30,17 40,13 50,10 60,7" fill="none" stroke-width="2" stroke-linecap="round"/></svg><span class="price-change-val up">+9.7%</span></div>
+            <div class="price-row"><div class="price-card-thumb" style="background:linear-gradient(160deg,#0d1a0d,#1a5a1a)">🌿</div><div class="price-card-info"><div class="price-card-name">Tarmogoyf</div><div class="price-card-set">Future Sight · Rare</div></div><svg class="price-sparkline" viewBox="0 0 60 28"><polyline class="spark-up" points="0,25 10,24 20,21 30,18 40,14 50,11 60,8" fill="none" stroke-width="2" stroke-linecap="round"/></svg><span class="price-change-val up">+7.3%</span></div>
+          </div>
+        </div>
+        <div class="price-panel glass">
+          <div class="price-panel-header"><span class="panel-icon">📉</span><span class="panel-title">Maggiori ribassi</span><span class="panel-sub">ultimi 7 giorni</span></div>
+          <div class="price-list">
+            <div class="price-row"><div class="price-card-thumb" style="background:linear-gradient(160deg,#1a1408,#504010)">⚡</div><div class="price-card-info"><div class="price-card-name">The One Ring</div><div class="price-card-set">LTR · Mythic</div></div><svg class="price-sparkline" viewBox="0 0 60 28"><polyline class="spark-down" points="0,4 10,7 20,10 30,13 40,17 50,21 60,25" fill="none" stroke-width="2" stroke-linecap="round"/></svg><span class="price-change-val down">−15.2%</span></div>
+            <div class="price-row"><div class="price-card-thumb" style="background:linear-gradient(160deg,#1a0a2e,#3d1a6e)">🌑</div><div class="price-card-info"><div class="price-card-name">Sheoldred, Whispering One</div><div class="price-card-set">ONE · Mythic</div></div><svg class="price-sparkline" viewBox="0 0 60 28"><polyline class="spark-down" points="0,3 10,6 20,9 30,14 40,18 50,22 60,26" fill="none" stroke-width="2" stroke-linecap="round"/></svg><span class="price-change-val down">−11.8%</span></div>
+            <div class="price-row"><div class="price-card-thumb" style="background:linear-gradient(160deg,#200808,#601010)">🗡️</div><div class="price-card-info"><div class="price-card-name">Grief</div><div class="price-card-set">MH2 · Mythic</div></div><svg class="price-sparkline" viewBox="0 0 60 28"><polyline class="spark-down" points="0,5 10,8 20,11 30,15 40,19 50,22 60,26" fill="none" stroke-width="2" stroke-linecap="round"/></svg><span class="price-change-val down">−8.4%</span></div>
+            <div class="price-row"><div class="price-card-thumb" style="background:linear-gradient(160deg,#0d1a0d,#1a5a1a)">🌲</div><div class="price-card-info"><div class="price-card-name">Yorion, Sky Nomad</div><div class="price-card-set">IKO · Rare</div></div><svg class="price-sparkline" viewBox="0 0 60 28"><polyline class="spark-down" points="0,4 10,7 20,12 30,15 40,19 50,23 60,26" fill="none" stroke-width="2" stroke-linecap="round"/></svg><span class="price-change-val down">−6.1%</span></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<footer style="position:relative;z-index:1;border-top:1px solid var(--glass-border);padding:30px 24px;text-align:center;color:var(--text-dim);font-size:.76rem;">
+  <span style="font-family:'Cinzel',serif;color:var(--gold);font-size:.88rem;">AetherDeck</span>
+  &nbsp;·&nbsp; Non affiliato con Wizards of the Coast &nbsp;·&nbsp; Magic: The Gathering è un marchio di WotC
+</footer>
+<script src="assets/js/homepage.js"></script>
+</body>
+</html>
