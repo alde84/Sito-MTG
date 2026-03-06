@@ -26,7 +26,7 @@
  */
 
 import { useEffect, useState } from 'react';
-import { ScryfallCard } from '../page';
+import { ScryfallCard } from '../CardsPageInner';
 
 interface CardModalProps {
   card: ScryfallCard;   // Carta cliccata nella griglia (versione di partenza)
