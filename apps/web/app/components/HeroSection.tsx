@@ -276,3 +276,11 @@ export function HeroSection({
     </section>
   );
 }
+
+// Nota: aggiungi questo blocco <style> dentro il return della HeroSection,
+// prima del tag </section> di chiusura:
+// <style>{`
+//   @media (max-width: 640px) {
+//     #hero { min-height: auto !important; padding-bottom: 80px !important; }
+//   }
+// `}</style>
